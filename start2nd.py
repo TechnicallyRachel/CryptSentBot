@@ -30,9 +30,15 @@ import os
 
 while True:
     bitDataAv = pd.read_csv("bitData.csv", sep = ",")
+    liteDataAv = pd.read_csv("liteData.csv", sep = ",")
+    ethDataAv = pd.read_csv("ethData.csv", sep = ",")
     #print data.head()
 
     bitAvPol = bitDataAv["avPol"]
+    print bitAvPol
+    liteAvPol = liteDataAv["avPol"]
+    print liteAvPol
+    ethAvPol = ethDataAv["avPol"]
     #print Pol
 
     dfcall=bitDataAv.astype('datetime64[ns]')
@@ -54,15 +60,28 @@ while True:
 
     x = Time
     #x = [Time]
-    y = bitAvPol
+    y1 = bitAvPol
+    y2 = liteAvPol
+    y3 = ethAvPol
 
 
     fig = plt.figure()
-    plt.plot(x, y)
 
-    plt.xlabel('Past hour')
+    #ax = plt.axes(y1, y2)
+    #ax.yrange(
+    #ax.plot(x, y1, y2)
+
+    #ylim is a function of pyplot - limits y axis
+    plt.ylim(-2.0, 2.0)
+
+    plt.plot(x,y1,label='Bitcoin')
+    plt.plot(x,y2,label='Litecoin')
+    plt.plot(x,y3,label='Ethereum')
+    
+    plt.xlabel('Past 1 hour')
     plt.ylabel('Sentiment')
-    plt.title('Sentiment Analysis Graph\nof Bitcoin')
+    plt.title('Sentiment Analysis Graph\nof Cryptocurrency')
+    #plt.legend('Bitcoin', 'Litecoin', 'Ethereum')
     plt.legend()
 
     #plt.show()
@@ -90,19 +109,33 @@ while True:
 
     #photo_path = "Users/rachelgiles/Desktop/PythonProjects/dataAnalysis/sentAnalysis/bitfig1.png"
     photo_path = "bitfig1.png"
-    message = "Sentiment analyses of bitcoin tweets, the past 5 minutes:"
+    message = "Sentiment analyses of bitcoin tweets, the past hour:"
     #twitter.update_status(status=myfig)
     api.update_with_media(photo_path, status=message)
     print("Tweeted: {}".format(message))
 
 
+#REMOVE CSV FILES TO BE REWRITTEN WITH A NEW HOUR'S DATA
     os.remove('bitData.csv')
+    os.remove('liteData.csv')
+    os.remove('ethData.csv')
 
+#CREATE NEW CSV'S WITH HEADER ONLY
     with open('bitData.csv', 'a') as csv_file:
         writer = csv.writer(csv_file, delimiter =",")
         writer.writerow(('avPol', 'time'))
+        
+    with open('liteData.csv', 'a') as csv_file:
+        writer = csv.writer(csv_file, delimiter =",")
+        writer.writerow(('avPol', 'time'))
+
+    with open('ethData.csv', 'a') as csv_file:
+        writer = csv.writer(csv_file, delimiter =",")
+        writer.writerow(('avPol', 'time'))
+        
 
     #Every 5 minutes = 300secs
-    time.sleep(60)
+    #1 hour 3600 secs
+    time.sleep(3600)
 
-    
+   
