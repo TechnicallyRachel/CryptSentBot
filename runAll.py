@@ -1,6 +1,4 @@
-
-
-# analyse data from bitcoin, litecoin and ethereum
+ analyse data from bitcoin, litecoin and ethereum
 import tweepy, time
 from twython import Twython, TwythonError
 from textblob import TextBlob #about textblob accuracy https://stackoverflow.com/questions/34518570/how-are-sentiment-analysis-computed-in-blob
@@ -24,6 +22,7 @@ import os
 #Write initial csv (to be deleted) outside loop to get just 1 header
 # If inside loop - will write header for each tweet
 #Will not average properly
+
 with open('bitData.csv', 'a') as csv_file:
     writer = csv.writer(csv_file, delimiter =",")
     writer.writerow(('avPol', 'time'))
@@ -111,7 +110,7 @@ def start1st():
             avPol = np.mean(findPol, dtype=np.float64)
                 #findSub = np.array([Sub]).astype(np.float)
                 #avSub = np.mean(findSub, dtype=np.float64)
-            print 'The average polarity of 10 most current tweets is:', avPol
+            ###print 'The average polarity of 10 most current tweets is:', avPol
                 #print 'The average subjectivity of 10 most current tweets is:', avSub
 
 
@@ -163,7 +162,7 @@ def start1st():
             avPol = np.mean(findPol, dtype=np.float64)
                 #findSub = np.array([Sub]).astype(np.float)
                 #avSub = np.mean(findSub, dtype=np.float64)
-            print 'The average polarity of 10 most current tweets is:', avPol
+            ###print 'The average polarity of 10 most current tweets is:', avPol
                 #print 'The average subjectivity of 10 most current tweets is:', avSub
 
 
@@ -214,7 +213,7 @@ def start1st():
             avPol = np.mean(findPol, dtype=np.float64)
                 #findSub = np.array([Sub]).astype(np.float)
                 #avSub = np.mean(findSub, dtype=np.float64)
-            print 'The average polarity of 10 most current tweets is:', avPol
+            ###print 'The average polarity of 10 most current tweets is:', avPol
                 #print 'The average subjectivity of 10 most current tweets is:', avSub
 
 
@@ -240,26 +239,23 @@ def start1st():
 #*****************************start2nd.py************************************
 def start2nd():
     while True:
+        #READ CSV COLUMN AS NUMBERED LIST (NOT STRING)
         bitDataAv = pd.read_csv("bitData.csv", sep = ",")
         liteDataAv = pd.read_csv("liteData.csv", sep = ",")
         ethDataAv = pd.read_csv("ethData.csv", sep = ",")
         #print data.head()
 
+        #DEFINING VARIABE TO GRAPH
         bitAvPol = bitDataAv["avPol"]
-        print bitAvPol
+        #print bitAvPol
         liteAvPol = liteDataAv["avPol"]
-        print liteAvPol
+        #print liteAvPol
         ethAvPol = ethDataAv["avPol"]
-        #print Pol
+        #print ethAvPol
 
         dfcall=bitDataAv.astype('datetime64[ns]')
         Time = dfcall["time"]
-        print Time
-
-        #data2 = data[["0.5", "2018-01-03 14:41:48.961986"]]
-
-
-        # *************MATPLOTLIB***********
+        #print Time
 
         x = Time
         #x = [Time]
@@ -267,25 +263,62 @@ def start2nd():
         y2 = liteAvPol
         y3 = ethAvPol
 
+        #TAKING AVERAGE POLARITY OF THE HOUR
 
+        # Extract [Pol] as numbered list variable using pandas
+        #data = pd.read_csv("ethDataTemp.csv", sep = ",")
+        #bitPol = data['Pol']
+        #Sub = data["0.0"]
+                    
+        #FIND THE AVERAGE POL AND SUB FOR THE HOUR
+            #THIS ALL WORKS - FROM NUMPY
+        findBitPol = np.array([bitAvPol]).astype(np.float)
+        avBitPol = np.mean(findBitPol, dtype=np.float64)
+        print 'average bitcoin sentiment for the hour is:', avBitPol
+        a = 'Bitcoin average/hr:', avBitPol
+
+        findLitePol = np.array([liteAvPol]).astype(np.float)
+        avLitePol = np.mean(findLitePol, dtype=np.float64)
+        print 'average litecoin sentiment for the hour is:', avLitePol
+        b = 'Litecoin average/hr:', avLitePol
+
+        findEthPol = np.array([ethAvPol]).astype(np.float)
+        avEthPol = np.mean(findEthPol, dtype=np.float64)
+        print 'average Ethereum sentiment for the hour is:', avEthPol
+        c = 'Ethereum average/hr:', avEthPol
+
+            #findSub = np.array([Sub]).astype(np.float)
+            #avSub = np.mean(findSub, dtype=np.float64)
+        #print 'The average polarity of 10 most current tweets is:', avPol
+
+
+
+        #************************MATPLOTLIB******************
         fig = plt.figure()
-
-        #ax = plt.axes(y1, y2)
-        #ax.yrange(
-        #ax.plot(x, y1, y2)
 
         #ylim is a function of pyplot - limits y axis
         plt.ylim(-2.0, 2.0)
 
-        plt.plot(x,y1,label='Bitcoin')
-        plt.plot(x,y2,label='Litecoin')
-        plt.plot(x,y3,label='Ethereum')
-        
-        plt.xlabel('Past 1 hour')
+        #plt.plot(x,y1,label='Bitcoin')
+        plot1 = plt.plot(x,y1,label='Bitcoin') 
+        #plt.plot(x,y2,label='Litecoin')
+        plot2 = plt.plot(x,y2,label='Litecoin')
+        #plt.plot(x,y3,label='Ethereum')
+        plot3 = plt.plot(x,y3,label='Ethereum')
+
+        plt.xlabel('Past Hour')
         plt.ylabel('Sentiment')
         plt.title('Sentiment Analysis Graph\nof Cryptocurrency')
-        #plt.legend('Bitcoin', 'Litecoin', 'Ethereum')
-        plt.legend()
+
+        #Subplot must have 111
+        ax = fig.add_subplot(111)
+
+        leg1 = ax.legend(loc='upper right')
+
+        # leg1 will be removed from figure
+        leg2 = ax.legend((a,b,c), loc='lower left')
+        # Manually add the first legend back
+        ax.add_artist(leg1)
 
         #plt.show()
 
@@ -308,7 +341,7 @@ def start2nd():
 
         #photo_path = "Users/rachelgiles/Desktop/PythonProjects/dataAnalysis/sentAnalysis/bitfig1.png"
         photo_path = "bitfig1.png"
-        message = "Sentiment analyses of bitcoin tweets, the past hour:"
+        message = "Sentiment analyses of Bitcoin, Litecoin and Ethereum tweets, the past hour:"
         #twitter.update_status(status=myfig)
         api.update_with_media(photo_path, status=message)
         print("Tweeted: {}".format(message))
