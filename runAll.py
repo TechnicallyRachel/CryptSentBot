@@ -1,4 +1,4 @@
- analyse data from bitcoin, litecoin and ethereum
+#analyse data from bitcoin, litecoin and ethereum
 import tweepy, time
 from twython import Twython, TwythonError
 from textblob import TextBlob #about textblob accuracy https://stackoverflow.com/questions/34518570/how-are-sentiment-analysis-computed-in-blob
