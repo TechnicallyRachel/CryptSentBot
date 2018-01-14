@@ -136,29 +136,61 @@ a3 = ripPrice
 
 #************************MATPLOTLIB******************
 
-#*******JUST BITCOIN PRICES AND SENTIMENT OVERLAY GRAPH****
-fig, ax1 = plt.subplots()
-#t = np.arange(0.01, 10.0, 0.01)
-#s1 = np.exp(t)
-ax1.plot(x, a1, 'b-')
-ax1.set_xlabel('time (s)')
-# Make the y-axis label, ticks and tick labels match the line color.
-ax1.set_ylabel('Price', color='b')
-ax1.tick_params('y', colors='b')
 
-ax2 = ax1.twinx()
-#s2 = np.sin(2 * np.pi * t)
-ax2.plot(x, y1, 'r-')
-ax2.set_ylabel('sent', color='r')
-ax2.tick_params('y', colors='r')
-#ax2.tick_params((-1.0, 1.0), colors='r')
-#DOES NOT WORK
-#ax2.ylim(-1.0, 1.0))
+#*******BITCOIN PRICES AND SENTIMENT OVERLAY GRAPH****
+def bit_graph():
+    fig, ax1 = plt.subplots()
+    #t = np.arange(0.01, 10.0, 0.01)
+    #s1 = np.exp(t)
+    ax1.plot(x, a1, 'b-')
+    ax1.set_xlabel('time')
+    # Make the y-axis label, ticks and tick labels match the line color.
+    ax1.set_ylabel('Price', color='b')
+    ax1.tick_params('y', colors='b')
 
-fig.tight_layout()
-#SAVE FIG TO PNG
-fig.savefig('FAfig1.png', dpi=fig.dpi)
+    ax2 = ax1.twinx()
+    #s2 = np.sin(2 * np.pi * t)
+    ax2.plot(x, y1, 'r-')
+    ax2.set_ylabel('sent', color='r')
+    ax2.tick_params('y', colors='r')
+    #ax2.tick_params((-1.0, 1.0), colors='r')
+    #DOES NOT WORK
+    #ax2.ylim(-1.0, 1.0))
+
+    fig.tight_layout()
+    #SAVE FIG TO PNG
+    fig.savefig('FAfig1.png', dpi=fig.dpi)
 
 #plt.show()
 
+
+#*******ETHEREUM PRICES AND SENTIMENT OVERLAY GRAPH****
+
+def eth_graph():
+    fig, ax1 = plt.subplots()
+    #t = np.arange(0.01, 10.0, 0.01)
+    #s1 = np.exp(t)
+    ax1.plot(x, a2, 'b-')
+    ax1.set_xlabel('time')
+    # Make the y-axis label, ticks and tick labels match the line color.
+    ax1.set_ylabel('Price', color='b')
+    ax1.tick_params('y', colors='b')
+
+    ax2 = ax1.twinx()
+    #s2 = np.sin(2 * np.pi * t)
+    ax2.plot(x, y3, 'r-')
+    ax2.set_ylabel('sent', color='r')
+    ax2.tick_params('y', colors='r')
+    #ax2.tick_params((-1.0, 1.0), colors='r')
+    #DOES NOT WORK
+    #ax2.ylim(-1.0, 1.0))
+
+    fig.tight_layout()
+    #SAVE FIG TO PNG
+    fig.savefig('FAfig2.png', dpi=fig.dpi)
+
+    plt.show()
+    return;
+
+eth_graph()
 
