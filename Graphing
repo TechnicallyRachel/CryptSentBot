@@ -1,9 +1,8 @@
 #Work-in-progress
 #Graph of 1 hr incriments of data
 
-#Bitcoin, Ethereum, Ripple prices
-#Bitcoin, Ethereum, Ripple sentiment
-
+#Bitcoin, Ethereum, Litecoin prices
+#Bitcoin, Ethereum, Litecoin sentiment
 
 import tweepy, time
 from twython import Twython, TwythonError
@@ -23,26 +22,23 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 from urllib2 import urlopen
-
 import re
-
 
 import threading
 import os
 
 
-
 #********READING SENTIMENT DATA******
-#READ CSV COLUMN AS NUMBERED LIST (NOT STRING)
+#READ CSV COLUMN AS NUMBERED LIST (NOT STRING) USING PANDAS
 bitDataAv = pd.read_csv("bitData.csv", sep = ",")
-ripDataAv = pd.read_csv("ripData.csv", sep = ",")
+liteDataAv = pd.read_csv("ripData.csv", sep = ",")
 ethDataAv = pd.read_csv("ethData.csv", sep = ",")
 #print data.head()
 
 #DEFINING VARIABE TO GRAPH
 bitAvPol = bitDataAv["avPol"]
 #print bitAvPol
-ripAvPol = ripDataAv["avPol"]
+liteAvPol = liteDataAv["avPol"]
 #print liteAvPol
 ethAvPol = ethDataAv["avPol"]
 #print ethAvPol
@@ -52,9 +48,8 @@ Time = dfcall["time"]
 print Time
 
 x = Time
-
 y1 = bitAvPol
-y2 = ripAvPol
+y2 = liteAvPol
 y3 = ethAvPol
 
 #TAKING AVERAGE POLARITY OF THE HOUR
@@ -116,7 +111,7 @@ bitPrice = cryptPrices["bitPrice"]
 #print bitAvPol
 ethPrice = cryptPrices["ethPrice"]
 #print liteAvPol
-ripPrice = cryptPrices["ripPrice"]
+litePrice = cryptPrices["litePrice"]
 #print ethAvPol
 
 """
@@ -129,12 +124,48 @@ print Time
 #x = [Time]
 a1 = bitPrice
 a2 = ethPrice
-a3 = ripPrice
+a3 = litePrice
 #print a1, a2, a3
 
 
 
 #************************MATPLOTLIB******************
+#*********SENTIMENT GRAPH OF BITCOIN ETHEREUM LITECOIN COMBINED**
+
+def sent_graph():
+    fig = plt.figure()
+
+    #ylim is a function of pyplot - limits y axis
+    plt.ylim(-1.0, 1.0)
+
+    #plt.plot(x,y1,label='Bitcoin')
+    plot1 = plt.plot(x,y1,label='Bitcoin') 
+    #plt.plot(x,y2,label='Litecoin')
+    plot2 = plt.plot(x,y2,label='Litecoin')
+    #plt.plot(x,y3,label='Ethereum')
+    plot3 = plt.plot(x,y3,label='Ethereum')
+
+    plt.xlabel('Past Hour')
+    plt.ylabel('Sentiment')
+    plt.title('Sentiment Analysis Graph\nof Cryptocurrency')
+
+    #Subplot must have 111
+    ax = fig.add_subplot(111)
+
+    leg1 = ax.legend(loc='upper right')
+        #SAVE FIG TO PNG
+    fig.savefig('bitfig1.png', dpi=fig.dpi)
+    #plt.show()
+"""#2nd legend
+    #leg1 will be removed from figure
+    leg2 = ax.legend((a,b,c), loc='lower left')
+    # Manually add the first legend back
+    ax.add_artist(leg1)
+"""
+    #plt.show()
+
+
+
 
 
 #*******BITCOIN PRICES AND SENTIMENT OVERLAY GRAPH****
@@ -189,8 +220,38 @@ def eth_graph():
     #SAVE FIG TO PNG
     fig.savefig('FAfig2.png', dpi=fig.dpi)
 
-    plt.show()
-    return;
+    #plt.show()
 
+#*******LITECOIN PRICES AND SENTIMENT OVERLAY GRAPH*****
+
+def lite_graph():
+    fig, ax1 = plt.subplots()
+    #t = np.arange(0.01, 10.0, 0.01)
+    #s1 = np.exp(t)
+    ax1.plot(x, a3, 'b-')
+    ax1.set_xlabel('time')
+    # Make the y-axis label, ticks and tick labels match the line color.
+    ax1.set_ylabel('Price', color='b')
+    ax1.tick_params('y', colors='b')
+
+    ax2 = ax1.twinx()
+    #s2 = np.sin(2 * np.pi * t)
+    ax2.plot(x, y2, 'r-')
+    ax2.set_ylabel('sent', color='r')
+    ax2.tick_params('y', colors='r')
+    #ax2.tick_params((-1.0, 1.0), colors='r')
+    #DOES NOT WORK
+    #ax2.ylim(-1.0, 1.0))
+
+    fig.tight_layout()
+    #SAVE FIG TO PNG
+    fig.savefig('FAfig3.png', dpi=fig.dpi)
+
+    #plt.show()
+
+    
+sent_graph()    
+bit_graph()
 eth_graph()
+lite_graph()
 
