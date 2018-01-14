@@ -1,0 +1,164 @@
+#Work-in-progress
+#Graph of 1 hr incriments of data
+
+#Bitcoin, Ethereum, Ripple prices
+#Bitcoin, Ethereum, Ripple sentiment
+
+
+import tweepy, time
+from twython import Twython, TwythonError
+from textblob import TextBlob #about textblob accuracy https://stackoverflow.com/questions/34518570/how-are-sentiment-analysis-computed-in-blob
+import csv
+from csv import reader
+import datetime
+from credentials import * #keys to twitter app in this file
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from pylab import figure
+import numpy as np
+from numpy import genfromtxt
+import pandas as pd
+
+from bs4 import BeautifulSoup
+import requests
+from urllib2 import urlopen
+
+import re
+
+
+import threading
+import os
+
+
+
+#********READING SENTIMENT DATA******
+#READ CSV COLUMN AS NUMBERED LIST (NOT STRING)
+bitDataAv = pd.read_csv("bitData.csv", sep = ",")
+ripDataAv = pd.read_csv("ripData.csv", sep = ",")
+ethDataAv = pd.read_csv("ethData.csv", sep = ",")
+#print data.head()
+
+#DEFINING VARIABE TO GRAPH
+bitAvPol = bitDataAv["avPol"]
+#print bitAvPol
+ripAvPol = ripDataAv["avPol"]
+#print liteAvPol
+ethAvPol = ethDataAv["avPol"]
+#print ethAvPol
+
+dfcall=bitDataAv.astype('datetime64[ns]')
+Time = dfcall["time"]
+print Time
+
+x = Time
+
+y1 = bitAvPol
+y2 = ripAvPol
+y3 = ethAvPol
+
+#TAKING AVERAGE POLARITY OF THE HOUR
+
+# Extract [Pol] as numbered list variable using pandas
+#data = pd.read_csv("ethDataTemp.csv", sep = ",")
+#bitPol = data['Pol']
+#Sub = data["0.0"]
+            
+#FIND THE AVERAGE POL AND SUB FOR THE HOUR
+    #THIS ALL WORKS - FROM NUMPY
+findBitPol = np.array([bitAvPol]).astype(np.float)
+avBitPol = np.mean(findBitPol, dtype=np.float64)
+print 'average bitcoin sentiment for the hour is:', avBitPol
+a = 'Bitcoin average/hr:', avBitPol
+
+findLitePol = np.array([liteAvPol]).astype(np.float)
+avLitePol = np.mean(findLitePol, dtype=np.float64)
+print 'average litecoin sentiment for the hour is:', avLitePol
+b = 'Litecoin average/hr:', avLitePol
+
+findEthPol = np.array([ethAvPol]).astype(np.float)
+avEthPol = np.mean(findEthPol, dtype=np.float64)
+print 'average Ethereum sentiment for the hour is:', avEthPol
+c = 'Ethereum average/hr:', avEthPol
+
+    #findSub = np.array([Sub]).astype(np.float)
+    #avSub = np.mean(findSub, dtype=np.float64)
+#print 'The average polarity of 10 most current tweets is:', avPol
+
+#********************BEAUTIFULSOUP WEBSCRAPING********
+"""
+url = 'https://www.livecoinwatch.com/'
+
+page = requests.get(url)
+#page = urlopen(url)
+
+#soup = BeautifulSoup(page, 'html')
+
+soup = BeautifulSoup(page.text, 'html.parser')
+
+bit = soup.tbody.find("td").next_sibling.next_sibling.next_sibling
+print bit.get_text()
+#\30 > td:
+#THIS WORKS
+eth = soup.tbody.find("tr").next_sibling.td.next_sibling.next_sibling.next_sibling
+print eth.get_text()
+
+rip = soup.tbody.find("tr").next_sibling.next_sibling.td.next_sibling.next_sibling.next_sibling
+print rip.get_text()
+"""
+#*********READING CRYPT PRICE DATA******
+cryptPrices= pd.read_csv("cryptPrices.csv", sep = ",")
+
+#print data.head()
+
+#DEFINING VARIABE TO GRAPH
+bitPrice = cryptPrices["bitPrice"]
+#print bitAvPol
+ethPrice = cryptPrices["ethPrice"]
+#print liteAvPol
+ripPrice = cryptPrices["ripPrice"]
+#print ethAvPol
+
+"""
+dfcall=cryptPrices.astype('datetime64[ns]')
+Time = dfcall["time"]
+print Time
+"""
+
+#x = Time
+#x = [Time]
+a1 = bitPrice
+a2 = ethPrice
+a3 = ripPrice
+#print a1, a2, a3
+
+
+
+#************************MATPLOTLIB******************
+
+#*******JUST BITCOIN PRICES AND SENTIMENT OVERLAY GRAPH****
+fig, ax1 = plt.subplots()
+#t = np.arange(0.01, 10.0, 0.01)
+#s1 = np.exp(t)
+ax1.plot(x, a1, 'b-')
+ax1.set_xlabel('time (s)')
+# Make the y-axis label, ticks and tick labels match the line color.
+ax1.set_ylabel('Price', color='b')
+ax1.tick_params('y', colors='b')
+
+ax2 = ax1.twinx()
+#s2 = np.sin(2 * np.pi * t)
+ax2.plot(x, y1, 'r-')
+ax2.set_ylabel('sent', color='r')
+ax2.tick_params('y', colors='r')
+#ax2.tick_params((-1.0, 1.0), colors='r')
+#DOES NOT WORK
+#ax2.ylim(-1.0, 1.0))
+
+fig.tight_layout()
+#SAVE FIG TO PNG
+fig.savefig('FAfig1.png', dpi=fig.dpi)
+
+#plt.show()
+
+
