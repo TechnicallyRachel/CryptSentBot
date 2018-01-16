@@ -14,6 +14,7 @@ from credentials import * #keys to twitter app in this file
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib.ticker import NullFormatter
 from pylab import figure
 import numpy as np
 from numpy import genfromtxt
@@ -22,16 +23,19 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 from urllib2 import urlopen
+
 import re
+
 
 import threading
 import os
 
 
+
 #********READING SENTIMENT DATA******
-#READ CSV COLUMN AS NUMBERED LIST (NOT STRING) USING PANDAS
+#READ CSV COLUMN AS NUMBERED LIST (NOT STRING)
 bitDataAv = pd.read_csv("bitData.csv", sep = ",")
-liteDataAv = pd.read_csv("ripData.csv", sep = ",")
+liteDataAv = pd.read_csv("liteData.csv", sep = ",")
 ethDataAv = pd.read_csv("ethData.csv", sep = ",")
 #print data.head()
 
@@ -48,6 +52,7 @@ Time = dfcall["time"]
 print Time
 
 x = Time
+#x = [Time]
 y1 = bitAvPol
 y2 = liteAvPol
 y3 = ethAvPol
@@ -129,129 +134,184 @@ a3 = litePrice
 
 
 
-#************************MATPLOTLIB******************
-#*********SENTIMENT GRAPH OF BITCOIN ETHEREUM LITECOIN COMBINED**
 
-def sent_graph():
-    fig = plt.figure()
+#*********MATPLOTLIB******
+# plot with various axes scales
 
-    #ylim is a function of pyplot - limits y axis
-    plt.ylim(-1.0, 1.0)
+fig, axs = plt.subplots(2, 2, sharex=True)
+fig.subplots_adjust(left=0.08, right=0.98, wspace=0.1)
+#plt.title('Sentiment Analysis Graph\nof Cryptocurrency')#DOESNOTWORK
 
-    #plt.plot(x,y1,label='Bitcoin')
-    plot1 = plt.plot(x,y1,label='Bitcoin') 
-    #plt.plot(x,y2,label='Litecoin')
-    plot2 = plt.plot(x,y2,label='Litecoin')
-    #plt.plot(x,y3,label='Ethereum')
-    plot3 = plt.plot(x,y3,label='Ethereum')
+#****linear
+#fig = plt.figure()
 
-    plt.xlabel('Past Hour')
-    plt.ylabel('Sentiment')
-    plt.title('Sentiment Analysis Graph\nof Cryptocurrency')
+#*******SENTIMENT GRAPH*******
 
-    #Subplot must have 111
-    ax = fig.add_subplot(111)
+ax = axs[0, 0]
+#ylim is a function of pyplot - limits y axis
+#ax.ylim(-2.0, 2.0)
 
-    leg1 = ax.legend(loc='upper right')
-        #SAVE FIG TO PNG
-    fig.savefig('bitfig1.png', dpi=fig.dpi)
-    #plt.show()
-"""#2nd legend
-    #leg1 will be removed from figure
-    leg2 = ax.legend((a,b,c), loc='lower left')
-    # Manually add the first legend back
-    ax.add_artist(leg1)
-"""
-    #plt.show()
+#plt.plot(x,y1,label='Bitcoin')
+plot1 = ax.plot(x,y1,'red',label='Bitcoin') 
+#plt.plot(x,y2,label='Litecoin')
+plot2 = ax.plot(x,y2,'orange',label='Litecoin')
+#plt.plot(x,y3,label='Ethereum')
+plot3 = ax.plot(x,y3,'b-',label='Ethereum')
 
+ax.set_xlabel('Past Hour')
+ax.set_ylabel('Sentiment Comparisons')
+# Make the y-axis label, ticks and tick labels match the line color.
+#ax.set_ylabel('Sentiment', color='black')
+ax.tick_params('y', colors='black')
+#ax.title('Sentiment Analysis Graph\nof Cryptocurrency')
 
+#ax.legend()
+#UPPER LEGEND
+#ax.legend( [ 'Lag ' + str(lag) for lag in all_x],loc='center right', bbox_to_anchor=(1.3, 0.5)
 
 
+#LOWER LEGEND
+# Shrink current axis's height by 10% on the bottom
+box = ax.get_position()
+ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
 
-#*******BITCOIN PRICES AND SENTIMENT OVERLAY GRAPH****
-def bit_graph():
-    fig, ax1 = plt.subplots()
-    #t = np.arange(0.01, 10.0, 0.01)
-    #s1 = np.exp(t)
-    ax1.plot(x, a1, 'b-')
-    ax1.set_xlabel('time')
-    # Make the y-axis label, ticks and tick labels match the line color.
-    ax1.set_ylabel('Price', color='b')
-    ax1.tick_params('y', colors='b')
+# Put a legend below current axis
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+          fancybox=True, shadow=True, ncol=5)
 
-    ax2 = ax1.twinx()
-    #s2 = np.sin(2 * np.pi * t)
-    ax2.plot(x, y1, 'r-')
-    ax2.set_ylabel('sent', color='r')
-    ax2.tick_params('y', colors='r')
-    #ax2.tick_params((-1.0, 1.0), colors='r')
-    #DOES NOT WORK
-    #ax2.ylim(-1.0, 1.0))
+#Applies grid
+#ax.grid(True)
+#Subplot must have 111
+#ax = fig.add_subplot(111)
 
-    fig.tight_layout()
+#leg1 = ax.legend(loc='upper right')
     #SAVE FIG TO PNG
-    fig.savefig('FAfig1.png', dpi=fig.dpi)
+#fig.savefig('bitfig1.png', dpi=fig.dpi)
+#plt.show()
+
+#******BITCOIN PRICE/SENT GRAPH****
+# symmetric log
+ax = axs[0, 1]
+
+ax.plot(x, a1, 'black',label='Prices')
+ax.set_xlabel('Past Hour')
+# Make the y-axis label, ticks and tick labels match the line color.
+ax.set_ylabel('Bitcoin Price', color='black')
+ax.tick_params('y', colors='black')
+
+ax2 = ax.twinx()
+#s2 = np.sin(2 * np.pi * t)
+ax2.plot(x, y1, 'r-',label='Bitcoin Sentiment')
+ax2.set_ylabel('Bitcoin Sentiment', color='r')
+ax2.tick_params('y', colors='r')
+#ax2.tick_params((-1.0, 1.0), colors='r')
+#DOES NOT WORK
+#ax2.ylim(-1.0, 1.0))
+
+#ax.legend()
+
+# Shrink current axis's height by 10% on the bottom
+box = ax.get_position()
+ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
+
+# Put a legend below current axis
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+          fancybox=True, shadow=True, ncol=5)
+
+fig.tight_layout()
+#SAVE FIG TO PNG
+#fig.savefig('FAfig1.png', dpi=fig.dpi)
+
+"""
+ax = axs[1, 1]
+ax.plot(x, y2)
+ax.set_yscale('symlog', linthreshy=0.02)
+ax.set_title('symlog')
+ax.grid(True)
+"""
+
+#**********LITECOIN PRICE/SENT GRAPH******
+# log
+ax = axs[1, 1]
+#fig, ax1 = plt.subplots()
+#t = np.arange(0.01, 10.0, 0.01)
+#s1 = np.exp(t)
+ax.plot(x, a3, 'black',label='Litecoin Price')
+ax.set_xlabel('Past Hour')
+# Make the y-axis label, ticks and tick labels match the line color.
+ax.set_ylabel('Litecoin Price', color='black')
+ax.tick_params('y', colors='black')
+
+ax2 = ax.twinx()
+#s2 = np.sin(2 * np.pi * t)
+ax2.plot(x, y2, 'orange',label='Litecoin Sentiment')
+ax2.set_ylabel('Litecoin Sentiment', color='orange')
+ax2.tick_params('y', colors='orange')
+#ax2.tick_params((-1.0, 1.0), colors='r')
+#DOES NOT WORK
+#ax2.ylim(-1.0, 1.0))
+
+#ax.legend()
+
+
+fig.tight_layout()
+#SAVE FIG TO PNG
+#fig.savefig('FAfig2.png', dpi=fig.dpi)
 
 #plt.show()
 
 
-#*******ETHEREUM PRICES AND SENTIMENT OVERLAY GRAPH****
 
-def eth_graph():
-    fig, ax1 = plt.subplots()
-    #t = np.arange(0.01, 10.0, 0.01)
-    #s1 = np.exp(t)
-    ax1.plot(x, a2, 'b-')
-    ax1.set_xlabel('time')
-    # Make the y-axis label, ticks and tick labels match the line color.
-    ax1.set_ylabel('Price', color='b')
-    ax1.tick_params('y', colors='b')
+"""
+ax = axs[0, 1]
+ax.plot(x, y1)
+ax.set_yscale('log')
+ax.set_title('log')
+ax.grid(True)
+"""
 
-    ax2 = ax1.twinx()
-    #s2 = np.sin(2 * np.pi * t)
-    ax2.plot(x, y3, 'r-')
-    ax2.set_ylabel('sent', color='r')
-    ax2.tick_params('y', colors='r')
-    #ax2.tick_params((-1.0, 1.0), colors='r')
-    #DOES NOT WORK
-    #ax2.ylim(-1.0, 1.0))
+#*******ETHEREUM PRICE/SENT GRAPH*******
 
-    fig.tight_layout()
-    #SAVE FIG TO PNG
-    fig.savefig('FAfig2.png', dpi=fig.dpi)
 
-    #plt.show()
+# logit
+ax = axs[1, 0]
 
-#*******LITECOIN PRICES AND SENTIMENT OVERLAY GRAPH*****
 
-def lite_graph():
-    fig, ax1 = plt.subplots()
-    #t = np.arange(0.01, 10.0, 0.01)
-    #s1 = np.exp(t)
-    ax1.plot(x, a3, 'b-')
-    ax1.set_xlabel('time')
-    # Make the y-axis label, ticks and tick labels match the line color.
-    ax1.set_ylabel('Price', color='b')
-    ax1.tick_params('y', colors='b')
+ax.plot(x, a2, 'black',label='Ethereum Price')
+ax.set_xlabel('Past Hour')
+# Make the y-axis label, ticks and tick labels match the line color.
+ax.set_ylabel('Ethereum Price', color='black')
+ax.tick_params('y', colors='black')
 
-    ax2 = ax1.twinx()
-    #s2 = np.sin(2 * np.pi * t)
-    ax2.plot(x, y2, 'r-')
-    ax2.set_ylabel('sent', color='r')
-    ax2.tick_params('y', colors='r')
-    #ax2.tick_params((-1.0, 1.0), colors='r')
-    #DOES NOT WORK
-    #ax2.ylim(-1.0, 1.0))
+ax2 = ax.twinx()
+#s2 = np.sin(2 * np.pi * t)
+ax2.plot(x, y3, 'b-',label='Ethereum Sentiment')
+ax2.set_ylabel('Ethereum Sentiment', color='b')
+ax2.tick_params('y', colors='b')
+#ax2.tick_params((-1.0, 1.0), colors='r')
+#DOES NOT WORK
+#ax2.ylim(-1.0, 1.0))
 
-    fig.tight_layout()
-    #SAVE FIG TO PNG
-    fig.savefig('FAfig3.png', dpi=fig.dpi)
+#ax.legend()
 
-    #plt.show()
 
-    
-sent_graph()    
-bit_graph()
-eth_graph()
-lite_graph()
+fig.tight_layout()
+
+#SAVE FIG TO PNG
+fig.savefig('4g.png', dpi=fig.dpi)
+
+plt.show()
+
+"""
+ax = axs[1, 0]
+ax.plot(x, y3)
+ax.set_yscale('logit')
+ax.set_title('logit')
+ax.grid(True)
+ax.yaxis.set_minor_formatter(NullFormatter())
+"""
+
+
 
