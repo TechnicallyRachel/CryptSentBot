@@ -322,7 +322,7 @@ def start2nd():
         # Make the y-axis label, ticks and tick labels match the line color.
         #ax.set_ylabel('Sentiment', color='black')
         ax.tick_params('y', colors='black')
-        ax2.margins(0.5)
+        ax.margins(0.5)
         #ax.title('Sentiment Analysis Graph\nof Cryptocurrency')
 
         #ax.legend()
