@@ -3,7 +3,6 @@
 
 #Bitcoin, Ethereum, Litecoin prices
 #Bitcoin, Ethereum, Litecoin sentiment
-
 import tweepy, time
 from twython import Twython, TwythonError
 from textblob import TextBlob #about textblob accuracy https://stackoverflow.com/questions/34518570/how-are-sentiment-analysis-computed-in-blob
@@ -34,22 +33,38 @@ import os
 
 #********READING SENTIMENT DATA******
 #READ CSV COLUMN AS NUMBERED LIST (NOT STRING)
+"""
 bitDataAv = pd.read_csv("bitData.csv", sep = ",")
 liteDataAv = pd.read_csv("liteData.csv", sep = ",")
 ethDataAv = pd.read_csv("ethData.csv", sep = ",")
 #print data.head()
+"""
+dataAv = pd.read_csv("cryptData.csv", sep = ",")
 
 #DEFINING VARIABE TO GRAPH
-bitAvPol = bitDataAv["avPol"]
+bitAvPol = dataAv["avBitPol"]
 #print bitAvPol
-liteAvPol = liteDataAv["avPol"]
-#print liteAvPol
-ethAvPol = ethDataAv["avPol"]
+liteAvPol = dataAv["avLitePol"]
+print liteAvPol
+ethAvPol = dataAv["avEthPol"]
 #print ethAvPol
 
-dfcall=bitDataAv.astype('datetime64[ns]')
+dfcall=dataAv.astype('datetime64[ns]')
 Time = dfcall["time"]
-print Time
+#print Time
+
+#DEFINING VARIABE TO GRAPH
+bitPrice = dataAv["bitPrice"]
+#print bitPrice
+ethPrice = dataAv["ethPrice"]
+#print liteAvPol
+litePrice = dataAv["litePrice"]
+#print ethAvPol
+
+a1 = bitPrice
+a2 = litePrice
+a3 = ethPrice
+#print a1, a2, a3
 
 x = Time
 #x = [Time]
@@ -85,55 +100,6 @@ c = 'Ethereum average/hr:', avEthPol
     #avSub = np.mean(findSub, dtype=np.float64)
 #print 'The average polarity of 10 most current tweets is:', avPol
 
-#********************BEAUTIFULSOUP WEBSCRAPING********
-"""
-url = 'https://www.livecoinwatch.com/'
-
-page = requests.get(url)
-#page = urlopen(url)
-
-#soup = BeautifulSoup(page, 'html')
-
-soup = BeautifulSoup(page.text, 'html.parser')
-
-bit = soup.tbody.find("td").next_sibling.next_sibling.next_sibling
-print bit.get_text()
-#\30 > td:
-#THIS WORKS
-eth = soup.tbody.find("tr").next_sibling.td.next_sibling.next_sibling.next_sibling
-print eth.get_text()
-
-rip = soup.tbody.find("tr").next_sibling.next_sibling.td.next_sibling.next_sibling.next_sibling
-print rip.get_text()
-"""
-#*********READING CRYPT PRICE DATA******
-cryptPrices= pd.read_csv("cryptPrices.csv", sep = ",")
-
-#print data.head()
-
-#DEFINING VARIABE TO GRAPH
-bitPrice = cryptPrices["bitPrice"]
-#print bitAvPol
-ethPrice = cryptPrices["ethPrice"]
-#print liteAvPol
-litePrice = cryptPrices["litePrice"]
-#print ethAvPol
-
-"""
-dfcall=cryptPrices.astype('datetime64[ns]')
-Time = dfcall["time"]
-print Time
-"""
-
-#x = Time
-#x = [Time]
-a1 = bitPrice
-a2 = ethPrice
-a3 = litePrice
-#print a1, a2, a3
-
-
-
 
 #*********MATPLOTLIB******
 # plot with various axes scales
@@ -163,6 +129,7 @@ ax.set_ylabel('Sentiment Comparisons')
 # Make the y-axis label, ticks and tick labels match the line color.
 #ax.set_ylabel('Sentiment', color='black')
 ax.tick_params('y', colors='black')
+ax.margins(0.5)
 #ax.title('Sentiment Analysis Graph\nof Cryptocurrency')
 
 #ax.legend()
@@ -177,8 +144,9 @@ ax.set_position([box.x0, box.y0 + box.height * 0.1,
                  box.width, box.height * 0.9])
 
 # Put a legend below current axis
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-          fancybox=True, shadow=True, ncol=5)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=5)
+#ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+#          fancybox=True, shadow=True, ncol=5)
 
 #Applies grid
 #ax.grid(True)
@@ -205,6 +173,7 @@ ax2 = ax.twinx()
 ax2.plot(x, y1, 'r-',label='Bitcoin Sentiment')
 ax2.set_ylabel('Bitcoin Sentiment', color='r')
 ax2.tick_params('y', colors='r')
+ax2.margins(0.5)
 #ax2.tick_params((-1.0, 1.0), colors='r')
 #DOES NOT WORK
 #ax2.ylim(-1.0, 1.0))
@@ -217,8 +186,9 @@ ax.set_position([box.x0, box.y0 + box.height * 0.1,
                  box.width, box.height * 0.9])
 
 # Put a legend below current axis
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-          fancybox=True, shadow=True, ncol=5)
+#ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+#          fancybox=True, shadow=True, ncol=5)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05))
 
 fig.tight_layout()
 #SAVE FIG TO PNG
@@ -238,7 +208,7 @@ ax = axs[1, 1]
 #fig, ax1 = plt.subplots()
 #t = np.arange(0.01, 10.0, 0.01)
 #s1 = np.exp(t)
-ax.plot(x, a3, 'black',label='Litecoin Price')
+ax.plot(x, a2, 'black',label='Litecoin Price')
 ax.set_xlabel('Past Hour')
 # Make the y-axis label, ticks and tick labels match the line color.
 ax.set_ylabel('Litecoin Price', color='black')
@@ -249,6 +219,7 @@ ax2 = ax.twinx()
 ax2.plot(x, y2, 'orange',label='Litecoin Sentiment')
 ax2.set_ylabel('Litecoin Sentiment', color='orange')
 ax2.tick_params('y', colors='orange')
+ax2.margins(0.5)
 #ax2.tick_params((-1.0, 1.0), colors='r')
 #DOES NOT WORK
 #ax2.ylim(-1.0, 1.0))
@@ -279,39 +250,34 @@ ax.grid(True)
 ax = axs[1, 0]
 
 
-ax.plot(x, a2, 'black',label='Ethereum Price')
+ax.plot(x, a3, 'black',label='Ethereum Price')
 ax.set_xlabel('Past Hour')
 # Make the y-axis label, ticks and tick labels match the line color.
 ax.set_ylabel('Ethereum Price', color='black')
 ax.tick_params('y', colors='black')
 
+
 ax2 = ax.twinx()
+
 #s2 = np.sin(2 * np.pi * t)
 ax2.plot(x, y3, 'b-',label='Ethereum Sentiment')
+
 ax2.set_ylabel('Ethereum Sentiment', color='b')
+#ax2.margins(0.25)
 ax2.tick_params('y', colors='b')
+
+
 #ax2.tick_params((-1.0, 1.0), colors='r')
-#DOES NOT WORK
-#ax2.ylim(-1.0, 1.0))
+
+plt.ylim(-.2, .5)
 
 #ax.legend()
-
-
 fig.tight_layout()
+fig.autofmt_xdate()
+
+
 
 #SAVE FIG TO PNG
-fig.savefig('4g.png', dpi=fig.dpi)
+fig.savefig('4g1.png', dpi=fig.dpi)
 
 plt.show()
-
-"""
-ax = axs[1, 0]
-ax.plot(x, y3)
-ax.set_yscale('logit')
-ax.set_title('logit')
-ax.grid(True)
-ax.yaxis.set_minor_formatter(NullFormatter())
-"""
-
-
-
