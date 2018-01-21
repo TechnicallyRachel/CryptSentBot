@@ -306,14 +306,10 @@ def start2nd():
         fig, axs = plt.subplots(2, 2, sharex=True)
         fig.subplots_adjust(left=0.08, right=0.98, wspace=0.1)
         #plt.title('Sentiment Analysis Graph\nof Cryptocurrency')#DOESNOTWORK
-
         #fig = plt.figure()
 
         #*******SENTIMENT GRAPH*******
         ax = axs[0, 0]
-        #ylim is a function of pyplot - limits y axis
-        #ax.ylim(-2.0, 2.0)
-
         #plt.plot(x,y1,label='Bitcoin')
         plot1 = ax.plot(x,y1,'red',label='Bitcoin') 
         #plt.plot(x,y2,label='Litecoin')
@@ -326,6 +322,7 @@ def start2nd():
         # Make the y-axis label, ticks and tick labels match the line color.
         #ax.set_ylabel('Sentiment', color='black')
         ax.tick_params('y', colors='black')
+        ax2.margins(0.5)
         #ax.title('Sentiment Analysis Graph\nof Cryptocurrency')
 
         #ax.legend()
@@ -342,20 +339,13 @@ def start2nd():
         # Put a legend below current axis
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=5)
 
-        #Applies grid
-        #ax.grid(True)
-        #Subplot must have 111
-        #ax = fig.add_subplot(111)
-
-        #leg1 = ax.legend(loc='upper right')
             #SAVE FIG TO PNG
         #fig.savefig('bitfig1.png', dpi=fig.dpi)
         #plt.show()
 
         #******BITCOIN PRICE/SENT GRAPH****
-        # symmetric log
-        ax = axs[0, 1]
 
+        ax = axs[0, 1]
         ax.plot(x, a1, 'black',label='Prices')
         ax.set_xlabel('Past Hour')
         # Make the y-axis label, ticks and tick labels match the line color.
@@ -367,11 +357,8 @@ def start2nd():
         ax2.plot(x, y1, 'r-',label='Bitcoin Sentiment')
         ax2.set_ylabel('Bitcoin Sentiment', color='r')
         ax2.tick_params('y', colors='r')
+        ax2.margins(0.5)
         #ax2.tick_params((-1.0, 1.0), colors='r')
-        #DOES NOT WORK
-        #ax2.ylim(-1.0, 1.0))
-
-        #ax.legend()
 
         # Shrink current axis's height by 10% on the bottom
         box = ax.get_position()
@@ -384,14 +371,6 @@ def start2nd():
         fig.tight_layout()
         #SAVE FIG TO PNG
         #fig.savefig('FAfig1.png', dpi=fig.dpi)
-
-        """
-        ax = axs[1, 1]
-        ax.plot(x, y2)
-        ax.set_yscale('symlog', linthreshy=0.02)
-        ax.set_title('symlog')
-        ax.grid(True)
-        """
 
         #**********LITECOIN PRICE/SENT GRAPH******
         # log
@@ -410,28 +389,17 @@ def start2nd():
         ax2.plot(x, y2, 'orange',label='Litecoin Sentiment')
         ax2.set_ylabel('Litecoin Sentiment', color='orange')
         ax2.tick_params('y', colors='orange')
+        ax2.margins(0.5)
         #ax2.tick_params((-1.0, 1.0), colors='r')
-        #DOES NOT WORK
-        #ax2.ylim(-1.0, 1.0))
-
-        #ax.legend()
-
 
         fig.tight_layout()
         #SAVE FIG TO PNG
         #fig.savefig('FAfig2.png', dpi=fig.dpi)
-
         #plt.show()
-
-
 
         #*******ETHEREUM PRICE/SENT GRAPH*******
 
-
-        # logit
         ax = axs[1, 0]
-
-
         ax.plot(x, a3, 'black',label='Ethereum Price')
         ax.set_xlabel('Past Hour')
         # Make the y-axis label, ticks and tick labels match the line color.
@@ -443,12 +411,9 @@ def start2nd():
         ax2.plot(x, y3, 'b-',label='Ethereum Sentiment')
         ax2.set_ylabel('Ethereum Sentiment', color='b')
         ax2.tick_params('y', colors='b')
+        plt.ylim(-.2, .5)
         #ax2.tick_params((-1.0, 1.0), colors='r')
-        #DOES NOT WORK
-        #ax2.ylim(-1.0, 1.0))
-
         #ax.legend()
-
 
         fig.tight_layout()
         #FIX DATES SHOWN ON BOTTOM OF GRAPH
@@ -456,8 +421,7 @@ def start2nd():
 
         #SAVE FIG TO PNG
         fig.savefig('4g.png', dpi=fig.dpi)
-
-
+      
         # ********TWITTER BOT PORTION OF CODE**************
                 #This logs us in to twitter using the tweepy library
         auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
