@@ -209,6 +209,12 @@ def start1st():
             writer = csv.writer(csv_file, delimiter =",")
                     #writer.writerow((0, 0.0, 0.00))
             writer.writerow([avBitPol, bitPrice, avLitePol, litePrice, avEthPol, ethPrice, datetime.datetime.now()])
+        #*****WRITE MASTER PERMANENT CSV***
+        with open('cryptMasterData.csv', 'a') as csv_file:
+            writer = csv.writer(csv_file, delimiter =",")
+                    #writer.writerow((0, 0.0, 0.00))
+            writer.writerow([avBitPol, bitPrice, avLitePol, litePrice, avEthPol, ethPrice, datetime.datetime.now()])
+
 
     #*********DELETE TEMP CSV FILES TO BE RE-WRITTEN**********
             
@@ -334,8 +340,7 @@ def start2nd():
                          box.width, box.height * 0.9])
 
         # Put a legend below current axis
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-                  fancybox=True, shadow=True, ncol=5)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=5)
 
         #Applies grid
         #ax.grid(True)
@@ -374,8 +379,7 @@ def start2nd():
                          box.width, box.height * 0.9])
 
         # Put a legend below current axis
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-                  fancybox=True, shadow=True, ncol=5)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=5)
 
         fig.tight_layout()
         #SAVE FIG TO PNG
@@ -447,6 +451,8 @@ def start2nd():
 
 
         fig.tight_layout()
+        #FIX DATES SHOWN ON BOTTOM OF GRAPH
+        fig.autofmt_xdate()
 
         #SAVE FIG TO PNG
         fig.savefig('4g.png', dpi=fig.dpi)
@@ -494,3 +500,5 @@ t2 = Thread(target = start2nd)
 t1.start()
 time.sleep(100)
 t2.start()
+
+
